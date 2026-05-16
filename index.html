@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Human Activity Recognition — Rajneesh Babu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:     #0a0f1e;
+      --bg2:    #0f172a;
+      --bg3:    #1e293b;
+      --border: rgba(99,102,241,.18);
+      --text:   #f1f5f9;
+      --text2:  #cbd5e1;
+      --text3:  #94a3b8;
+      --indigo: #6366f1;
+      --violet: #8b5cf6;
+      --pink:   #ec4899;
+      --teal:   #06b6d4;
+      --green:  #10b981;
+      --orange: #f59e0b;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+    /* BACKGROUND */
+    .bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+      background-image:linear-gradient(rgba(99,102,241,.04) 1px,transparent 1px),
+                       linear-gradient(90deg,rgba(99,102,241,.04) 1px,transparent 1px);
+      background-size:50px 50px;}
+    .bg-glow{position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(99,102,241,.12),transparent),
+                 radial-gradient(ellipse 60% 50% at 80% 80%,rgba(139,92,246,.1),transparent);}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;
+      background:rgba(10,15,30,.85);backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 2.5rem;height:58px;}
+    .nav-logo{font-size:.95rem;font-weight:800;text-decoration:none;
+      background:linear-gradient(135deg,var(--indigo),var(--violet));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .nav-links{display:flex;gap:1.5rem;list-style:none;}
+    .nav-links a{color:var(--text3);text-decoration:none;font-size:.85rem;font-weight:500;transition:color .2s;}
+    .nav-links a:hover{color:var(--indigo);}
+
+    /* LAYOUT */
+    .container{max-width:1000px;margin:0 auto;padding:0 1.5rem;position:relative;z-index:1;}
+    section{padding:5rem 0;}
+
+    /* HERO */
+    #hero{min-height:100vh;display:flex;align-items:center;padding-top:58px;}
+    .badge{display:inline-flex;align-items:center;gap:.4rem;
+      background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);
+      color:var(--indigo);font-size:.72rem;font-weight:700;letter-spacing:1px;
+      text-transform:uppercase;padding:.32rem 1rem;border-radius:99px;margin-bottom:1.5rem;}
+    .badge-dot{width:6px;height:6px;background:var(--indigo);border-radius:50%;animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+    h1{font-size:clamp(2.6rem,6vw,4.2rem);font-weight:900;letter-spacing:-2px;line-height:1.05;margin-bottom:1rem;}
+    .grad{background:linear-gradient(135deg,var(--indigo),var(--violet),var(--pink));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .hero-sub{font-size:1rem;color:var(--text2);max-width:560px;line-height:1.85;margin-bottom:2rem;}
+    .hero-sub span{color:var(--indigo);font-weight:600;}
+
+    /* BUTTONS */
+    .btn-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:2.5rem;}
+    .btn{padding:.62rem 1.45rem;border-radius:9px;font-weight:600;font-size:.875rem;
+      text-decoration:none;display:inline-flex;align-items:center;gap:.45rem;transition:all .22s;}
+    .btn-primary{background:linear-gradient(135deg,var(--indigo),var(--violet));color:#fff;
+      box-shadow:0 4px 18px rgba(99,102,241,.35);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(99,102,241,.45);}
+    .btn-outline{background:rgba(255,255,255,.04);color:var(--text2);border:1px solid var(--border);}
+    .btn-outline:hover{border-color:var(--indigo);color:var(--indigo);background:rgba(99,102,241,.08);transform:translateY(-2px);}
+
+    /* STATS */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);
+      border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:3rem;}
+    @media(max-width:600px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+    .stat-box{background:var(--bg2);padding:1.4rem 1rem;text-align:center;}
+    .stat-num{font-size:2rem;font-weight:900;letter-spacing:-1px;
+      background:linear-gradient(135deg,var(--indigo),var(--violet));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .stat-label{font-size:.68rem;font-weight:600;color:var(--text3);margin-top:.3rem;
+      text-transform:uppercase;letter-spacing:.5px;}
+
+    /* SECTION HEADERS */
+    .sec-label{font-size:.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+      color:var(--indigo);margin-bottom:.6rem;}
+    .sec-title{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:900;letter-spacing:-.75px;margin-bottom:.5rem;}
+    .sec-sub{font-size:.9rem;color:var(--text3);max-width:520px;margin-bottom:2.5rem;}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0;}
+
+    /* CARDS */
+    .card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.6rem;
+      transition:all .25s;position:relative;overflow:hidden;}
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .3s;}
+    .card:hover{border-color:rgba(99,102,241,.35);box-shadow:0 8px 32px rgba(99,102,241,.12);transform:translateY(-3px);}
+    .card:hover::before{opacity:1;}
+    .card-indigo::before{background:linear-gradient(90deg,var(--indigo),var(--violet));}
+    .card-violet::before{background:linear-gradient(90deg,var(--violet),var(--pink));}
+    .card-teal::before  {background:linear-gradient(90deg,var(--teal),var(--green));}
+    .card-orange::before{background:linear-gradient(90deg,var(--orange),var(--pink));}
+
+    /* RESULTS */
+    .results-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;}
+    @media(max-width:640px){.results-grid{grid-template-columns:1fr;}}
+    .result-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.3rem 1.5rem;}
+    .result-model{font-size:.78rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem;}
+    .result-acc{font-size:2rem;font-weight:900;letter-spacing:-1px;}
+    .result-note{font-size:.75rem;color:var(--text3);margin-top:.2rem;}
+    .best-badge{display:inline-block;background:rgba(99,102,241,.15);color:var(--indigo);
+      font-size:.65rem;font-weight:700;padding:.1rem .5rem;border-radius:4px;margin-left:.4rem;
+      border:1px solid rgba(99,102,241,.3);}
+
+    /* ACTIVITIES GRID */
+    .activities-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+    @media(max-width:600px){.activities-grid{grid-template-columns:repeat(2,1fr);}}
+    .act-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+      padding:1.2rem;text-align:center;transition:all .22s;}
+    .act-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+    .act-emoji{font-size:2rem;margin-bottom:.5rem;}
+    .act-name{font-size:.78rem;font-weight:700;color:var(--text2);letter-spacing:.3px;}
+    .act-acc{font-size:.72rem;color:var(--text3);margin-top:.2rem;}
+
+    /* FEATURE TABLE */
+    .feat-bar-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.55rem;}
+    .feat-name{font-size:.75rem;color:var(--text2);width:230px;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+    .feat-bar-wrap{flex:1;background:rgba(255,255,255,.05);border-radius:99px;height:8px;overflow:hidden;}
+    .feat-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--indigo),var(--violet));}
+    .feat-pct{font-size:.72rem;color:var(--text3);width:38px;text-align:right;}
+
+    /* PIPELINE */
+    .pipeline{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:1.5rem 0;}
+    .pipe-step{background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);
+      color:var(--text2);font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:8px;}
+    .pipe-arrow{color:var(--indigo);font-size:1rem;font-weight:700;}
+
+    /* TAGS */
+    .tag{display:inline-block;background:rgba(255,255,255,.05);border:1px solid var(--border);
+      color:var(--text3);font-size:.72rem;font-weight:500;padding:.2rem .65rem;border-radius:6px;margin:.2rem;}
+
+    /* CONFUSION NOTE */
+    .confusion-note{background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);
+      border-radius:10px;padding:1rem 1.2rem;font-size:.85rem;color:var(--text2);line-height:1.7;}
+    .confusion-note strong{color:var(--indigo);}
+
+    /* FOOTER */
+    footer{background:var(--bg2);border-top:1px solid var(--border);padding:2rem 0;text-align:center;}
+    footer p{font-size:.8rem;color:var(--text3);}
+    footer a{color:var(--indigo);text-decoration:none;}
+  </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="https://rajneeshbabu.github.io" class="nav-logo">← Rajneesh Babu</a>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#analysis">Analysis</a></li>
+    <li><a href="#pipeline">Pipeline</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="badge"><span class="badge-dot"></span>Machine Learning · Signal Processing</div>
+    <h1>Human Activity<br><span class="grad">Recognition</span></h1>
+    <p class="hero-sub">
+      Classifying <span>6 daily activities</span> from smartphone accelerometer and gyroscope signals.
+      UCI HAR Dataset — <span>30 subjects</span>, Samsung Galaxy S II, 50 Hz, 561 pre-extracted features.
+      Best model: <span>95.52% accuracy</span> on held-out subjects.
+    </p>
+    <div class="btn-row">
+      <a href="https://github.com/rajneeshbabu/human-activity-recognition" target="_blank" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.22.68-.48v-1.69c-2.78.6-3.37-1.34-3.37-1.34-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0112 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0022 12c0-5.52-4.48-10-10-10z"/></svg>
+        GitHub Repo
+      </a>
+      <a href="https://archive.ics.uci.edu/ml/datasets/human+activity+recognition+using+smartphones" target="_blank" class="btn btn-outline">↗ UCI Dataset</a>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-num">30</div><div class="stat-label">Subjects</div></div>
+      <div class="stat-box"><div class="stat-num">561</div><div class="stat-label">Features</div></div>
+      <div class="stat-box"><div class="stat-num">10K</div><div class="stat-label">Samples</div></div>
+      <div class="stat-box"><div class="stat-num">95.5%</div><div class="stat-label">Accuracy</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="container">
+    <div class="sec-label">Dataset</div>
+    <h2 class="sec-title">Experiment Overview</h2>
+    <p class="sec-sub">30 volunteers aged 19–48 performed 6 activities wearing a Samsung Galaxy S II at the waist. Signals captured at 50 Hz, segmented into 2.56 s windows with 50% overlap.</p>
+
+    <div class="activities-grid">
+      <div class="act-card" style="border-color:rgba(99,102,241,.3);">
+        <div class="act-emoji">🚶</div>
+        <div class="act-name">WALKING</div>
+        <div class="act-acc">Train: 1,226 · Test: 496</div>
+      </div>
+      <div class="act-card" style="border-color:rgba(139,92,246,.3);">
+        <div class="act-emoji">⬆️</div>
+        <div class="act-name">WALKING UPSTAIRS</div>
+        <div class="act-acc">Train: 1,073 · Test: 471</div>
+      </div>
+      <div class="act-card" style="border-color:rgba(236,72,153,.3);">
+        <div class="act-emoji">⬇️</div>
+        <div class="act-name">WALKING DOWNSTAIRS</div>
+        <div class="act-acc">Train: 986 · Test: 420</div>
+      </div>
+      <div class="act-card" style="border-color:rgba(245,158,11,.3);">
+        <div class="act-emoji">🪑</div>
+        <div class="act-name">SITTING</div>
+        <div class="act-acc">Train: 1,286 · Test: 491</div>
+      </div>
+      <div class="act-card" style="border-color:rgba(16,185,129,.3);">
+        <div class="act-emoji">🧍</div>
+        <div class="act-name">STANDING</div>
+        <div class="act-acc">Train: 1,374 · Test: 532</div>
+      </div>
+      <div class="act-card" style="border-color:rgba(6,182,212,.3);">
+        <div class="act-emoji">🛌</div>
+        <div class="act-name">LAYING</div>
+        <div class="act-acc">Train: 1,407 · Test: 537</div>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+      <div class="card card-indigo">
+        <div style="font-size:.75rem;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.8rem;">Signal Channels</div>
+        <div style="font-size:.85rem;color:var(--text2);line-height:2;">
+          Body acceleration X / Y / Z<br>
+          Body gyroscope X / Y / Z<br>
+          Total acceleration X / Y / Z<br>
+          <span style="color:var(--text3);font-size:.78rem;">128 timesteps per window · 50 Hz</span>
+        </div>
+      </div>
+      <div class="card card-violet">
+        <div style="font-size:.75rem;font-weight:700;color:var(--violet);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.8rem;">Feature Engineering (561)</div>
+        <div style="font-size:.85rem;color:var(--text2);line-height:2;">
+          Time-domain: mean, std, MAD, energy, IQR, entropy, AR coefficients<br>
+          Frequency-domain (FFT): meanFreq, skewness, kurtosis, bandEnergy<br>
+          <span style="color:var(--text3);font-size:.78rem;">17 signal types × multiple statistics</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="container">
+    <div class="sec-label">Model Evaluation</div>
+    <h2 class="sec-title">Results — 5 Models Compared</h2>
+    <p class="sec-sub">All models evaluated on held-out test subjects (9 of 30 subjects never seen during training).</p>
+
+    <div class="results-grid">
+      <div class="result-card" style="border-color:rgba(99,102,241,.4);background:rgba(99,102,241,.06);">
+        <div class="result-model">Logistic Regression</div>
+        <div class="result-acc" style="color:var(--indigo);">95.52%<span class="best-badge">BEST</span></div>
+        <div class="result-note">Linear baseline — strong thanks to hand-crafted 561 features</div>
+      </div>
+      <div class="result-card" style="border-color:rgba(139,92,246,.3);">
+        <div class="result-model">SVM (RBF, C=10)</div>
+        <div class="result-acc" style="color:var(--violet);">95.49%</div>
+        <div class="result-note">Near-identical to LR; RBF kernel captures non-linear boundaries</div>
+      </div>
+      <div class="result-card">
+        <div class="result-model">LightGBM</div>
+        <div class="result-acc" style="color:var(--teal);">93.45%</div>
+        <div class="result-note">200 estimators, LR=0.1 — fast gradient boosting</div>
+      </div>
+      <div class="result-card">
+        <div class="result-model">XGBoost</div>
+        <div class="result-acc" style="color:var(--green);">93.42%</div>
+        <div class="result-note">200 trees, max depth=6</div>
+      </div>
+      <div class="result-card" style="grid-column:1/-1;">
+        <div class="result-model">Random Forest</div>
+        <div class="result-acc" style="color:var(--orange);">92.57%</div>
+        <div class="result-note">200 trees — best for feature importance analysis; gravity features dominate</div>
+      </div>
+    </div>
+
+    <!-- Per-activity -->
+    <h3 style="font-size:1.1rem;font-weight:700;margin:2.5rem 0 1rem;">Per-Activity Performance (Best Model — Logistic Regression)</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;">
+      <div style="background:var(--bg2);border:1px solid rgba(99,102,241,.25);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-size:1.4rem;">🚶</div>
+        <div style="font-size:.75rem;color:var(--text3);margin:.3rem 0;">WALKING</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--indigo);">96%</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(139,92,246,.25);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-size:1.4rem;">⬆️</div>
+        <div style="font-size:.75rem;color:var(--text3);margin:.3rem 0;">WALK UPSTAIRS</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--violet);">95%</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(236,72,153,.25);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-size:1.4rem;">⬇️</div>
+        <div style="font-size:.75rem;color:var(--text3);margin:.3rem 0;">WALK DOWNSTAIRS</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--pink);">94%</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(245,158,11,.25);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-size:1.4rem;">🪑</div>
+        <div style="font-size:.75rem;color:var(--text3);margin:.3rem 0;">SITTING</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--orange);">93%</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-size:1.4rem;">🧍</div>
+        <div style="font-size:.75rem;color:var(--text3);margin:.3rem 0;">STANDING</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--green);">94%</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(6,182,212,.25);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-size:1.4rem;">🛌</div>
+        <div style="font-size:.75rem;color:var(--text3);margin:.3rem 0;">LAYING</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--teal);">100%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ANALYSIS -->
+<section id="analysis">
+  <div class="container">
+    <div class="sec-label">Key Findings</div>
+    <h2 class="sec-title">Analysis &amp; Insights</h2>
+    <p class="sec-sub">What the data reveals about activity recognition using inertial sensors.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-bottom:1.5rem;">
+      <div class="card card-teal">
+        <div style="font-size:.75rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem;">🎯 LAYING — Perfect Classification</div>
+        <p style="font-size:.85rem;color:var(--text2);line-height:1.8;">
+          Gravity acts along a completely different axis when horizontal. The gravity acceleration along Z becomes dominant — completely separating LAYING from all other activities. <strong style="color:var(--teal)">100% precision and recall</strong> on the test set.
+        </p>
+      </div>
+      <div class="card card-orange">
+        <div style="font-size:.75rem;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem;">⚠️ SITTING vs STANDING — Hardest Pair</div>
+        <p style="font-size:.85rem;color:var(--text2);line-height:1.8;">
+          Both are static postures with similar gravity magnitude. The only difference is a subtle change in trunk angle. ~48 SITTING windows misclassified as STANDING in the confusion matrix — the hardest confusion pair.
+        </p>
+      </div>
+    </div>
+
+    <!-- Top features -->
+    <div class="card card-indigo" style="margin-bottom:1.4rem;">
+      <div style="font-size:.75rem;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1.2rem;">📊 Top 10 Features — Random Forest Importance</div>
+      <div class="feat-bar-row"><span class="feat-name">tGravityAcc-mean()-X</span><div class="feat-bar-wrap"><div class="feat-bar" style="width:100%"></div></div><span class="feat-pct">4.18%</span></div>
+      <div class="feat-bar-row"><span class="feat-name">tGravityAcc-min()-X</span><div class="feat-bar-wrap"><div class="feat-bar" style="width:76%"></div></div><span class="feat-pct">3.19%</span></div>
+      <div class="feat-bar-row"><span class="feat-name">tGravityAcc-mean()-Y</span><div class="feat-bar-wrap"><div class="feat-bar" style="width:71%"></div></div><span class="feat-pct">2.98%</span></div>
+      <div class="feat-bar-row"><span class="feat-name">angle(X,gravityMean)</span><div class="feat-bar-wrap"><div class="feat-bar" style="width:62%"></div></div><span class="feat-pct">2.60%</span></div>
+      <div class="feat-bar-row"><span class="feat-name">tGravityAcc-energy()-X</span><div class="feat-bar-wrap"><div class="feat-bar" style="width:58%"></div></div><span class="feat-pct">2.41%</span></div>
+      <div class="feat-bar-row"><span class="feat-name">angle(Y,gravityMean)</span><div class="feat-bar-wrap"><div class="feat-bar" style="width:56%"></div></div><span class="feat-pct">2.32%</span></div>
+      <div class="feat-bar-row"><span class="feat-name">tGravityAcc-max()-X</span><div class="feat-bar-wrap"><div class="feat-bar" style="width:54%"></div></div><span class="feat-pct">2.25%</span></div>
+      <div class="feat-bar-row"><span class="feat-name">tGravityAcc-min()-Y</span><div class="feat-bar-wrap"><div class="feat-bar" style="width:53%"></div></div><span class="feat-pct">2.21%</span></div>
+      <div class="feat-bar-row"><span class="feat-name">tGravityAcc-max()-Y</span><div class="feat-bar-wrap"><div class="feat-bar" style="width:46%"></div></div><span class="feat-pct">1.91%</span></div>
+      <div class="feat-bar-row"><span class="feat-name">tGravityAcc-energy()-Y</span><div class="feat-bar-wrap"><div class="feat-bar" style="width:39%"></div></div><span class="feat-pct">1.62%</span></div>
+      <p style="font-size:.78rem;color:var(--text3);margin-top:.8rem;">Gravity features dominate — they encode body orientation and effectively separate static from dynamic activities.</p>
+    </div>
+
+    <div class="confusion-note">
+      <strong>Why linear models win:</strong> The 561 features were hand-crafted by domain experts — means, standard deviations, FFT coefficients, etc. By the time data reaches the classifier, activities are already nearly linearly separable. Logistic Regression (95.52%) matches SVM (95.49%) because the feature engineering does the heavy lifting. Boosting methods achieve ~93% — still excellent, but the marginal gains from non-linearity are small.
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PIPELINE -->
+<section id="pipeline">
+  <div class="container">
+    <div class="sec-label">Implementation</div>
+    <h2 class="sec-title">ML Pipeline</h2>
+    <p class="sec-sub">End-to-end flow from raw sensor signals to activity prediction.</p>
+
+    <div class="pipeline">
+      <div class="pipe-step">📡 Raw Sensor Signals<br><span style="font-size:.7rem;color:var(--text3);">50 Hz · 9 channels</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">🔧 Pre-processing<br><span style="font-size:.7rem;color:var(--text3);">Butterworth filter · 2.56s windows</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">📐 Feature Extraction<br><span style="font-size:.7rem;color:var(--text3);">561 features · time + freq domain</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">⚖️ StandardScaler<br><span style="font-size:.7rem;color:var(--text3);">zero mean · unit variance</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">🤖 Classifier<br><span style="font-size:.7rem;color:var(--text3);">LR / SVM / RF / XGB / LGB</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">🎯 Activity Label<br><span style="font-size:.7rem;color:var(--text3);">95.52% accuracy</span></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-top:1.5rem;">
+      <div class="card card-indigo">
+        <div style="font-size:.75rem;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.8rem;">📓 Notebook Contents</div>
+        <div style="font-size:.83rem;color:var(--text2);line-height:2.1;">
+          ① Data loading &amp; class distribution<br>
+          ② PCA 2D projection (coloured by activity)<br>
+          ③ t-SNE embedding (2,000 samples)<br>
+          ④ Raw body acceleration signal plots<br>
+          ⑤ Top feature mean comparison<br>
+          ⑥ 5 classifiers trained &amp; evaluated<br>
+          ⑦ Confusion matrices (SVM + LR)<br>
+          ⑧ Feature importance (Random Forest)<br>
+          ⑨ Static vs dynamic activity scatter<br>
+          ⑩ Model save (joblib)
+        </div>
+      </div>
+      <div class="card card-violet">
+        <div style="font-size:.75rem;font-weight:700;color:var(--violet);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.8rem;">⚙️ Tech Stack</div>
+        <div style="margin-top:.3rem;">
+          <span class="tag">Python 3.10</span><span class="tag">Scikit-learn</span><span class="tag">XGBoost</span>
+          <span class="tag">LightGBM</span><span class="tag">NumPy</span><span class="tag">Pandas</span>
+          <span class="tag">Matplotlib</span><span class="tag">Seaborn</span><span class="tag">Streamlit</span>
+          <span class="tag">t-SNE</span><span class="tag">PCA</span><span class="tag">StandardScaler</span>
+          <span class="tag">joblib</span>
+        </div>
+        <div style="font-size:.75rem;font-weight:700;color:var(--violet);text-transform:uppercase;letter-spacing:.5px;margin:1rem 0 .6rem;">📁 Repository</div>
+        <div style="font-size:.82rem;color:var(--text3);font-family:'JetBrains Mono',monospace;line-height:2;">
+          har_notebook.ipynb<br>
+          app.py &nbsp;(Streamlit)<br>
+          UCI HAR Dataset/<br>
+          requirements.txt
+        </div>
+      </div>
+    </div>
+
+    <!-- Reference -->
+    <div style="margin-top:2rem;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.5rem;">
+      <div style="font-size:.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.5rem;">Reference</div>
+      <p style="font-size:.83rem;color:var(--text2);line-height:1.7;">
+        Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz.
+        <em>A Public Domain Dataset for Human Activity Recognition Using Smartphones.</em>
+        ESANN 2013, European Symposium on Artificial Neural Networks, Computational Intelligence and Machine Learning.
+      </p>
+      <a href="https://archive.ics.uci.edu/ml/datasets/human+activity+recognition+using+smartphones"
+         target="_blank" style="color:var(--indigo);font-size:.8rem;text-decoration:none;margin-top:.4rem;display:inline-block;">
+        ↗ UCI ML Repository — Human Activity Recognition
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>
+      <a href="https://rajneeshbabu.github.io">Rajneesh Babu</a> · M.Tech CDS · IISc Bengaluru · 2026<br>
+      <span style="font-size:.75rem;">UCI HAR Dataset · Anguita et al. 2012</span>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
