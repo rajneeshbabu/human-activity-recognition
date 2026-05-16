@@ -6,3 +6,4 @@ __pycache__/
 **/.ipynb_checkpoints/
 models/
 *.pkl
+!models/browser_model.json
